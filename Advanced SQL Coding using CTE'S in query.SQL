@@ -50,3 +50,27 @@ WHERE delivr_month < '2018-09-01';
      JOIN cost ON revenue.eatery = cost.eatery
     ORDER BY profit DESC;
 
+
+-- Bob, the Investment Relations Manager at Delivr, is preparing a pitch deck for a meeting with potential investors. He wants to add a line chart of registrations by month to highlight Delivr's success in gaining new users.
+
+   Send Bob a table of registrations by month.
+   
+   -- Wrap the query you just wrote in a CTE named reg_dates.
+   -- Using reg_dates, return a table of registrations by month.
+   
+   -- Wrap the query you wrote in a CTE named reg_dates
+WITH reg_date AS (
+  SELECT
+    user_id,
+    MIN(order_date) AS reg_date
+  FROM orders
+  GROUP BY user_id)
+
+SELECT
+  -- Count the unique user IDs by registration month
+  DATE_TRUNC('MONTH',orders.order_date):: DATE AS delivr_month,
+  Count(DISTINCT user_id) AS regs
+FROM orders
+GROUP BY delivr_month
+ORDER BY delivr_month ASC; 
+
