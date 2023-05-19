@@ -1,3 +1,7 @@
+-- You have a suggestion for Bob's pitch deck: Instead of showing registrations by month in the line chart, he can show the registrations running total by month. 
+The numbers are bigger that way, and investors always love bigger numbers! He agrees, and you begin to work on a query that returns a table of the registrations running total by month.
+
+
 -- Return a table of the registrations running total by month.
 -- Order by month in ascending order.
 -- Fetch the previous month's MAU.
