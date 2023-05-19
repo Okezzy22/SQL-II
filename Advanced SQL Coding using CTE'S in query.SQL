@@ -58,7 +58,6 @@ WHERE delivr_month < '2018-09-01';
    -- Wrap the query you just wrote in a CTE named reg_dates.
    -- Using reg_dates, return a table of registrations by month.
    
-   -- Wrap the query you wrote in a CTE named reg_dates
 WITH reg_date AS (
   SELECT
     user_id,
@@ -67,7 +66,6 @@ WITH reg_date AS (
   GROUP BY user_id)
 
 SELECT
-  -- Count the unique user IDs by registration month
   DATE_TRUNC('MONTH',orders.order_date):: DATE AS delivr_month,
   Count(DISTINCT user_id) AS regs
 FROM orders
@@ -79,6 +77,7 @@ The numbers are bigger that way, and investors always love bigger numbers! He ag
 
 -- Return a table of the registrations running total by month.
 -- Order by month in ascending order.
+-- Fetch the previous month's MAU.
 
 WITH reg_dates AS (
   SELECT
@@ -95,10 +94,26 @@ WITH reg_dates AS (
   GROUP BY delivr_month)
 
 SELECT
-  -- Calculate the registrations running total by month
   delivr_month,
   SUM(regs) OVER(ORDER BY delivr_month) AS regs_rt
 FROM regs
--- Order by month in ascending order
 ORDER BY delivr_month ASC; 
+
+-- Fetch the previous month's MAU.
+
+WITH mau AS (
+  SELECT
+    DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+    COUNT(DISTINCT user_id) AS mau
+  FROM orders
+  GROUP BY delivr_month)
+
+SELECT
+  delivr_month,
+  mau,
+  COALESCE(
+    LAG(mau) OVER(ORDER BY delivr_month ASC),
+  0) AS last_mau
+FROM mau
+ORDER BY delivr_month ASC;
 
